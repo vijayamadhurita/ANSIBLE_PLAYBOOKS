@@ -1,1 +1,12 @@
+- hosts: all
+  tasks:
+  - package:
+     name: "httpd"
+     state: present  
+  - copy:
+     dest: "/var/www/html" 
+     src: "/root/webpage.html"     
+  - service:
+     name: "httpd" 
+     state: started
 
