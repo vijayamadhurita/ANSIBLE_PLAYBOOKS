@@ -1,8 +1,15 @@
 - hosts: all
+  vars_prompt:
+  -  name: dir_name
+     private: no
+     prompt: "Enter the directory name on which you want to mount your dvd"
+  -  name: content
+     private: no
+     prompt: "Enter the content of your webpage"               
   tasks:
   - file:
      state: directory
-     path: "/dvd"
+     path: "{{ dir_name }}"
   - mount:
      src: "/dev/cdrom"
      path: "/dvd"
@@ -21,15 +28,21 @@
   - package:
      name: "httpd"
      state: present
+  - file:
+     state: directory
+     path: /var/www/lw
   - copy:
-     content: "this is my webpage"
-     dest: "/var/www/html/index.html"
+     src: my.conf
+     dest: /etc/httpd/conf.d/lw.conf 
+  - copy:
+     content: "{{ content }}"
+     dest: "/var/www/lw/index.html"
   - service:
      name: "httpd"
-     state: started
+     state: restarted
      enabled: yes
   - firewalld:
      state: enabled 
-     port: 80/tcp  
+     port: "8080/tcp"  
      permanent: yes
      immediate: yes  
